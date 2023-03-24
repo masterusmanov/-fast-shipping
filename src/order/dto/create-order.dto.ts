@@ -3,7 +3,7 @@ export class CreateOrderDto {
     phone_number: string;
     product_link: string;
     summa: number;
-    truck: string;
+    truck?: string;
     email: string;
     description: string;
 }

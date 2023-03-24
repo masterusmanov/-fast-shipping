@@ -11,15 +11,19 @@ import { Model } from 'mongoose';
 export class OrderService {
   constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
 
-  create(createOrderDto: CreateOrderDto) {
-    const createOrder = new this.orderModel({
-      ...createOrderDto
-    })
-    return createOrder.save();
-  }
+  async create(createOrderDto: CreateOrderDto) {
+    const createOrder = await new this.orderModel(createOrderDto).save();
+    const updatedOrder = await this.orderModel.findByIdAndUpdate(
+      String(createOrder._id),
+      {order_unique_id: String(createOrder._id)},
+      {new: true}
+    ).populate('currency_type_id')
+    return updatedOrder;
+  };
+  
 
   findAll() {
-    return this.orderModel.find();
+    return this.orderModel.find().populate('currency_type_id');
   }
 
   findOneById(id: string) {
